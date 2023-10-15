@@ -21,37 +21,26 @@ def bfs(graph, start_node, end_node):
         break
   return order
 
-# def dfs(graph,start_node, end_node, visited=None):
-#   if (visited is None):
-#     visited = set()
-#   visited.add(start_node)
-#   if(start_node == end_node):
-#     return [start_node]
-#   order = []
-#   for node in graph[start_node]:
-#     if node not in visited:
-#       order = dfs(graph,node,end_node,visited)
-#       if order is not None:
-#         order.insert(0,start_node)
-#   return order
+
 
 def dfs(graph, start_node, end_node, visited=set()):
+  if visited is None:
+    visited = set()
   order=[]
   if start_node not in visited:
     order.append(start_node)
     visited.add(start_node)
     for node in graph[start_node]:
       if node not in visited:
-        order.extend(dfs(graph,node,visited))
+        order.extend(dfs(graph,node,end_node,visited))
       if(end_node in order):
         break
-
   return order
 
 def dls(graph, start_node, end_node, limit=1,visited=set(),level=0):
   order=[]
   if(level == limit):
-    return [start_node]
+    return []
   if start_node not in visited:
     order.append(start_node)
     visited.add(start_node)
@@ -136,30 +125,34 @@ def a_star(graph, start_node, end_node):
       break
   return order
 
-def get_node_color(node, order, end_node, graph, final=False):
+def get_node_color(node, order, end_node, graph, final=False, path=[]):
   color_map = []
   if(len(order) == 0):
     return 'b'
   for i in graph.nodes:
     color = '#6ec2f7'
-    if i == node:
-      color='#fffaa0'
+
     if i in order and final:
       color='#a686fc'
+    if i in path:
+      color='#fffaa0'
     if i == end_node:
       color='#7adc7a'
     if i == order[0]:
       color='#ff7276'
+    if i == node:
+      color='#fffaa0'
     color_map.append(color)
   return color_map
 
 def visualize_search(order,title, G, position, end_node):
+  print(order)
   plt.figure() 
   plt.title(title)
-  legend_colors = {'Not Visited': '#6ec2f7', 'Currently Visiting': '#fffaa0', 'Visited': '#a686fc', 'Start Node': '#ff7276', 'Goal Node': '#7adc7a'}
+  legend_colors = {'Not Visited': '#6ec2f7', 'Currently Visiting / Path': '#fffaa0', 'Visited': '#a686fc', 'Start Node': '#ff7276', 'Goal Node': '#7adc7a'}
   legend_elements = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, label=label, markersize=15) for label, color in legend_colors.items()]
   plt.clf()
-  plt.pause(5)
+  plt.pause(3)
   for i, node in enumerate(order, start=1):
     plt.clf()
     plt.title(title)
@@ -172,34 +165,48 @@ def visualize_search(order,title, G, position, end_node):
     plt.draw()
     plt.pause(1)
 
-
-  nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G,True),node_size=5000)
+  node=None
+  nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G,True, backtrack_path(order[0],end_node, order, G)),node_size=5000)
   plt.draw()
-
-
   plt.show()
+
+def backtrack_path(start_node, end_node, order, graph):
+  if(end_node not in order):
+    return []
+  path = []
+  path.append(end_node)
+  for i in range(len(order)-1,0,-1):
+    if(order[i] in graph.neighbors(path[-1])):
+      path.append(order[i])
+  path.append(start_node)
+  return path
 
 def visualize_idls_search(start_node, end_node,title, G, position):
   plt.figure() 
   plt.title(title)
+  legend_colors = {'Not Visited': '#6ec2f7', 'Currently Visiting / Path': '#fffaa0', 'Visited': '#a686fc', 'Start Node': '#ff7276', 'Goal Node': '#7adc7a'}
+  legend_elements = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, label=label, markersize=15) for label, color in legend_colors.items()]
+  plt.clf()
+  plt.pause(3)
   order = []
   for j in range(1,10):
-    order.extend(dls(G, start_node, end_node, limit=j,visited=set()))
+    order = dls(G, start_node, end_node, limit=j,visited=set())
+    for i, node in enumerate(order, start=1):
+      plt.clf()
+      plt.title(title)
+      nx.draw(G, position, with_labels=True,node_color=get_node_color(node, order, end_node, G), node_size=5000)
+      edge_labels = nx.get_edge_attributes(G,'weight')
+      nx.draw_networkx_labels(G, {node: (x, y-0.2) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}, labels=nx.get_node_attributes(G, 'h'))
+      nx.draw_networkx_edge_labels(G,position,edge_labels=edge_labels)
+      plt.legend(handles=legend_elements, loc='lower right')
+      plt.draw()
+      plt.pause(1)
     if(end_node in order):
       break
-  for i, node in enumerate(order, start=1):
-    plt.clf()
-    plt.title(title)
-    nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G))
-    edge_labels = nx.get_edge_attributes(G,'weight')
-    nx.draw_networkx_edge_labels(G,position,edge_labels=edge_labels)
-    plt.draw()
-    plt.pause(1)
+  node = None
 
-  nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G,True))
+  nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G,True, backtrack_path(order[0],end_node, order, G)),node_size=5000)
   plt.draw()
-
-
   plt.show()
 
 
@@ -218,8 +225,8 @@ G.add_edges_from([
   ('Ransilu','Ranul',{'weight':5, }),
   ('Waruni','Menura',{'weight':1, }),
   ('Menura','Ranul',{'weight':3, }),
-  ('Isuri','Kithmi',{'weight':3, }),
   ('Isuri','Rashmi',{'weight':1, }),
+  ('Isuri','Kithmi',{'weight':3, }),
   ('Isuri','Thathsarani',{'weight':5, }),
   ('Kithmi','Rashmi',{'weight':5, }),
   ('Ranul','Taneesha',{'weight':1, }),
@@ -247,26 +254,43 @@ G.nodes['Isuri']['h'] = 1
 G.nodes['Kithmi']['h'] = 2
 G.nodes['Ranul']['h'] = 4
 # G.nodes['Taneesha']['h'] = 1
-G.nodes['Taneesha']['h'] = 1
+G.nodes['Taneesha']['h'] = 3
 G.nodes['Rashmi']['h'] = 0
 G.nodes['Thathsarani']['h'] = 8
 
 pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}
 
-def get_path(start,order, graph):
-  path = []
-  path.append(start)
-  for i in range(1,len(order)-1):
-    if(order[i] in graph.neighbors(path[-1])):
-      path.append(order[i])
-  path.append(order[-1])
-  return path
 
 # visualize_search(bfs(G, 'Haritha', 'Rashmi'), "BFS Visualization", G, pos, 'Rashmi')
 # visualize_search(dfs(G, 'Haritha', 'Rashmi'), "DFS Visualization", G, pos, 'Rashmi')
-# visualize_search(dls(G, 'S', 'G',2), "DLS Visualization", G, pos, 'G')
-# visualize_idls_search('S', 'G', "IDLS Visualization", G, pos)
+# visualize_search(dls(G, 'Haritha', 'Rashmi',3), "DLS Visualization", G, pos, 'Rashmi')
+# visualize_idls_search('Haritha', 'Rashmi', "IDLS Visualization", G, pos)
 # visualize_search(ucs(G, 'Haritha', 'Rashmi'), "UCS Visualization", G, pos, 'Rashmi')
 # visualize_search(greedy(G, 'Haritha', 'Rashmi'), "Greedy Visualization", G, pos, 'Rashmi')
-visualize_search(a_star(G, 'Haritha', 'Rashmi'), "A Star Visualization", G, pos, 'Rashmi')
+# visualize_search(a_star(G, 'Haritha', 'Rashmi'), "A Star Visualization", G, pos, 'Rashmi')
 
+
+print("Select Algorithm")
+print("1. Breadth First Search")
+print("2. Depth First Search")
+print("3. Depth Limited Search")
+print("4. Iterative Deepening Search")
+print("5. Uniform Cost Search")
+print("6. Greedy Search")
+print("7. A* Search")
+
+choice = int(input("Enter your choice: "))
+if choice==1:
+  visualize_search(bfs(G, 'Haritha', 'Rashmi'), "Breadth First Search Visualization", G, pos, 'Rashmi')
+elif choice==2:
+  visualize_search(dfs(G, 'Haritha', 'Rashmi'), "Depth First Search Visualization", G, pos, 'Rashmi')
+elif choice==3:
+  visualize_search(dls(G, 'Haritha', 'Rashmi',3), "Depth Limited Search Visualization", G, pos, 'Rashmi')
+elif choice==4:
+  visualize_idls_search('Haritha', 'Rashmi', "Iterative Deepening Search Visualization", G, pos)
+elif choice==5:
+  visualize_search(ucs(G, 'Haritha', 'Rashmi'), "Uniform Cost Search Visualization", G, pos, 'Rashmi')
+elif choice==6:
+  visualize_search(greedy(G, 'Haritha', 'Rashmi'), "Greedy Search Visualization", G, pos, 'Rashmi')
+elif choice==7:
+  visualize_search(a_star(G, 'Haritha', 'Rashmi'), "A Star Search Visualization", G, pos, 'Rashmi')
