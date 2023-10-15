@@ -83,6 +83,31 @@ def ucs(graph, start_node, end_node):
       break
   return order
 
+def greedy(graph, start_node, end_node):
+  visited = set()
+  q = queue.Queue()
+  q.put(start_node)
+  
+  order = []
+  while not q.empty():
+    vertex = q.get()
+    if vertex not in visited:
+      visited.add(vertex)
+      order.append(vertex)
+      min = None
+      min_heuristic = 100
+      for node in graph[vertex]:
+        h = nx.get_node_attributes(graph, 'h')[node]
+        if h < min_heuristic:
+          min = node
+          min_heuristic = h
+      if min is not None and min not in visited:      
+        q.put(min)    
+    if vertex == end_node:
+      break
+  return order
+
+
 def get_node_color(node, order, end_node, graph, final=False):
   color_map = []
   if(len(order) == 0):
@@ -101,10 +126,8 @@ def get_node_color(node, order, end_node, graph, final=False):
   return color_map
 
 def visualize_search(order,title, G, position, end_node):
-  print(order)
   plt.figure() 
   plt.title(title)
-  legend_labels = {1: 'Not Visited', 2: 'Currently Visiting', 3: 'Visited', 4: 'Start Node', 5:'Goal Node'}  # Labels for nodes
   legend_colors = {'Not Visited': '#6ec2f7', 'Currently Visiting': '#fffaa0', 'Visited': '#a686fc', 'Start Node': '#ff7276', 'Goal Node': '#7adc7a'}
   legend_elements = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, label=label, markersize=15) for label, color in legend_colors.items()]
   plt.clf()
@@ -136,7 +159,6 @@ def visualize_idls_search(start_node, end_node,title, G, position):
     order.extend(dls(G, start_node, end_node, limit=j,visited=set()))
     if(end_node in order):
       break
-  print(order)
   for i, node in enumerate(order, start=1):
     plt.clf()
     plt.title(title)
@@ -197,9 +219,8 @@ G.nodes['Kithmi']['h'] = 2
 G.nodes['Ranul']['h'] = 4
 G.nodes['Taneesha']['h'] = 3
 G.nodes['Rashmi']['h'] = 0
-G.nodes['Thathsarani']['h'] = 8
+G.nodes['Thathsarani']['h'] = 1
 
-print(nx.get_node_attributes(G, 'pos').items())
 pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}
 
 def get_path(start,order, graph):
@@ -215,4 +236,5 @@ def get_path(start,order, graph):
 # visualize_search(dfs(G, 'Haritha', 'Rashmi'), "DFS Visualization", G, pos, 'Rashmi')
 # visualize_search(dls(G, 'S', 'G',2), "DLS Visualization", G, pos, 'G')
 # visualize_idls_search('S', 'G', "IDLS Visualization", G, pos)
-visualize_search(ucs(G, 'Haritha', 'Rashmi'), "UCS Visualization", G, pos, 'Rashmi')
+# visualize_search(ucs(G, 'Haritha', 'Rashmi'), "UCS Visualization", G, pos, 'Rashmi')
+visualize_search(greedy(G, 'Haritha', 'Rashmi'), "Greedy Visualization", G, pos, 'Rashmi')
