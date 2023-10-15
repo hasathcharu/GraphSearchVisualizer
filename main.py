@@ -65,20 +65,22 @@ def dls(graph, start_node, end_node, limit=1,visited=set(),level=0):
 
 def ucs(graph, start_node, end_node):
   visited = set()
-  q = queue.Queue()
-  q.put(start_node)
+  q = queue.PriorityQueue()
+  entry_counter =0
+  q.put((0,entry_counter,start_node))
+  
   order = []
-  path = []
   while not q.empty():
     vertex = q.get()
     if vertex not in visited:
-      visited.add(vertex)
-      order.append(vertex)
-      for node in graph[vertex]:
-        if node not in visited:
-          q.put(node)
-      if vertex == end_node:
-        break
+      visited.add(vertex[2])
+      order.append(vertex[2])
+      for node in graph[vertex[2]]:
+        if node not in visited and all(node != item[2] for item in q.queue):
+          entry_counter+=1
+          q.put((graph[vertex[2]][node]['weight']+vertex[0],entry_counter, node))
+    if vertex[2] == end_node:
+      break
   return order
 
 def get_node_color(node, order, end_node, graph, final=False):
@@ -86,15 +88,15 @@ def get_node_color(node, order, end_node, graph, final=False):
   if(len(order) == 0):
     return 'b'
   for i in graph.nodes:
-    color = 'b'
+    color = '#6ec2f7'
     if i == node:
-      color='y'
+      color='#fffaa0'
     if i in order and final:
-      color='purple'
+      color='#a686fc'
     if i == end_node:
-      color='g'
+      color='#7adc7a'
     if i == order[0]:
-      color='r'
+      color='#ff7276'
     color_map.append(color)
   return color_map
 
@@ -102,14 +104,25 @@ def visualize_search(order,title, G, position, end_node):
   print(order)
   plt.figure() 
   plt.title(title)
+  legend_labels = {1: 'Not Visited', 2: 'Currently Visiting', 3: 'Visited', 4: 'Start Node', 5:'Goal Node'}  # Labels for nodes
+  legend_colors = {'Not Visited': '#6ec2f7', 'Currently Visiting': '#fffaa0', 'Visited': '#a686fc', 'Start Node': '#ff7276', 'Goal Node': '#7adc7a'}
+  legend_elements = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, label=label, markersize=15) for label, color in legend_colors.items()]
+  plt.clf()
+  plt.pause(5)
   for i, node in enumerate(order, start=1):
     plt.clf()
     plt.title(title)
-    nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G))
+    nx.draw(G, position, with_labels=True,node_color=get_node_color(node, order, end_node, G), node_size=5000)
+    edge_labels = nx.get_edge_attributes(G,'weight')
+    nx.draw_networkx_labels(G, {node: (x, y-0.2) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}, labels=nx.get_node_attributes(G, 'h'))
+    nx.draw_networkx_edge_labels(G,position,edge_labels=edge_labels)
+    plt.legend(handles=legend_elements, loc='lower right')
+
     plt.draw()
     plt.pause(1)
 
-  nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G,True))
+
+  nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G,True),node_size=5000)
   plt.draw()
 
 
@@ -128,6 +141,8 @@ def visualize_idls_search(start_node, end_node,title, G, position):
     plt.clf()
     plt.title(title)
     nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G))
+    edge_labels = nx.get_edge_attributes(G,'weight')
+    nx.draw_networkx_edge_labels(G,position,edge_labels=edge_labels)
     plt.draw()
     plt.pause(1)
 
@@ -146,21 +161,46 @@ G.add_edges_from([
   ('Haritha','Manupa',{'weight':3}),
   ('Haritha','Ransilu',{'weight':1}),
   ('Haritha','Waruni',{'weight':5}),
-  ('Haritha','Menura',{'weight':4}),
-  ('Manupa','Isuri',{'weight':1}),
-  ('Ransilu','Thathsarani',{'weight':2}),
-  ('Ransilu','Kithmi',{'weight':4}),
-  ('Ransilu','Ranul',{'weight':5}),
-  ('Waruni','Menura',{'weight':1}),
-  ('Menura','Ranul',{'weight':3}),
-  ('Isuri','Kithmi',{'weight':3}),
-  ('Isuri','Rashmi',{'weight':1}),
-  ('Isuri','Thathsarani',{'weight':5}),
-  ('Kithmi','Rashmi',{'weight':5}),
-  ('Ranul','Taneesha',{'weight':1}),
-  ('Taneesha','Rashmi',{'weight':2}),
+  ('Haritha','Menura',{'weight':4, }),
+  ('Manupa','Isuri',{'weight':1, }),
+  ('Ransilu','Thathsarani',{'weight':2, }),
+  ('Ransilu','Kithmi',{'weight':4, }),
+  ('Ransilu','Ranul',{'weight':5, }),
+  ('Waruni','Menura',{'weight':1, }),
+  ('Menura','Ranul',{'weight':3, }),
+  ('Isuri','Kithmi',{'weight':3, }),
+  ('Isuri','Rashmi',{'weight':1, }),
+  ('Isuri','Thathsarani',{'weight':5, }),
+  ('Kithmi','Rashmi',{'weight':5, }),
+  ('Ranul','Taneesha',{'weight':1, }),
+  ('Taneesha','Rashmi',{'weight':2, }),
 ])
-pos = nx.spring_layout(G)
+G.nodes['Haritha']['pos'] = (3.5, 2)
+G.nodes['Manupa']['pos'] = (2.5, 1)
+G.nodes['Ransilu']['pos'] = (3.2, 1)
+G.nodes['Waruni']['pos'] = (4, 1)
+G.nodes['Menura']['pos'] = (4.5, 2)
+G.nodes['Isuri']['pos'] = (2.5, -1)
+G.nodes['Kithmi']['pos'] = (3.5, -1)
+G.nodes['Ranul']['pos'] = (4.5, 0)
+G.nodes['Taneesha']['pos'] = (4, -1.5)
+G.nodes['Rashmi']['pos'] = (3.5, -3)
+G.nodes['Thathsarani']['pos'] = (3, 0)
+
+G.nodes['Haritha']['h'] = 10
+G.nodes['Manupa']['h'] = 6
+G.nodes['Ransilu']['h'] = 5
+G.nodes['Waruni']['h'] = 7
+G.nodes['Menura']['h'] = 9
+G.nodes['Isuri']['h'] = 1
+G.nodes['Kithmi']['h'] = 2
+G.nodes['Ranul']['h'] = 4
+G.nodes['Taneesha']['h'] = 3
+G.nodes['Rashmi']['h'] = 0
+G.nodes['Thathsarani']['h'] = 8
+
+print(nx.get_node_attributes(G, 'pos').items())
+pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}
 
 def get_path(start,order, graph):
   path = []
@@ -175,3 +215,4 @@ def get_path(start,order, graph):
 # visualize_search(dfs(G, 'Haritha', 'Rashmi'), "DFS Visualization", G, pos, 'Rashmi')
 # visualize_search(dls(G, 'S', 'G',2), "DLS Visualization", G, pos, 'G')
 # visualize_idls_search('S', 'G', "IDLS Visualization", G, pos)
+visualize_search(ucs(G, 'Haritha', 'Rashmi'), "UCS Visualization", G, pos, 'Rashmi')
