@@ -107,6 +107,34 @@ def greedy(graph, start_node, end_node):
       break
   return order
 
+def a_star(graph, start_node, end_node):
+  visited = set()
+  q = queue.PriorityQueue()
+  entry_counter =0
+  q.put((0,entry_counter,start_node))
+  
+  order = []
+  while not q.empty():
+    vertex = q.get()
+    print('processing', vertex)
+    print(q.queue)
+    if vertex not in visited:
+      visited.add(vertex[2])
+      order.append(vertex[2])
+      for node in graph[vertex[2]]:
+        if node not in visited and all(node != item[2] for item in q.queue):
+          entry_counter+=1
+          curr_cost = graph[vertex[2]][node]['weight'] + vertex[0] - nx.get_node_attributes(graph, 'h')[vertex[2]]
+          if(vertex[1]==0):
+            curr_cost = graph[vertex[2]][node]['weight']
+          print('vertex', vertex, 'node', node, 'curr_cost', curr_cost)
+
+          h = nx.get_node_attributes(graph, 'h')[node]
+          q.put((curr_cost+h, entry_counter, node))
+          print('queue', q.queue)
+    if vertex[2] == end_node:
+      break
+  return order
 
 def get_node_color(node, order, end_node, graph, final=False):
   color_map = []
@@ -196,6 +224,7 @@ G.add_edges_from([
   ('Kithmi','Rashmi',{'weight':5, }),
   ('Ranul','Taneesha',{'weight':1, }),
   ('Taneesha','Rashmi',{'weight':2, }),
+  # ('Taneesha','Rashmi',{'weight':1, }),
 ])
 G.nodes['Haritha']['pos'] = (3.5, 2)
 G.nodes['Manupa']['pos'] = (2.5, 1)
@@ -217,9 +246,10 @@ G.nodes['Menura']['h'] = 9
 G.nodes['Isuri']['h'] = 1
 G.nodes['Kithmi']['h'] = 2
 G.nodes['Ranul']['h'] = 4
-G.nodes['Taneesha']['h'] = 3
+# G.nodes['Taneesha']['h'] = 1
+G.nodes['Taneesha']['h'] = 1
 G.nodes['Rashmi']['h'] = 0
-G.nodes['Thathsarani']['h'] = 1
+G.nodes['Thathsarani']['h'] = 8
 
 pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}
 
@@ -237,4 +267,6 @@ def get_path(start,order, graph):
 # visualize_search(dls(G, 'S', 'G',2), "DLS Visualization", G, pos, 'G')
 # visualize_idls_search('S', 'G', "IDLS Visualization", G, pos)
 # visualize_search(ucs(G, 'Haritha', 'Rashmi'), "UCS Visualization", G, pos, 'Rashmi')
-visualize_search(greedy(G, 'Haritha', 'Rashmi'), "Greedy Visualization", G, pos, 'Rashmi')
+# visualize_search(greedy(G, 'Haritha', 'Rashmi'), "Greedy Visualization", G, pos, 'Rashmi')
+visualize_search(a_star(G, 'Haritha', 'Rashmi'), "A Star Visualization", G, pos, 'Rashmi')
+
