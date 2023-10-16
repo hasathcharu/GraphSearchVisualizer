@@ -3,225 +3,57 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from graph import G
 from matplotlib.widgets import Button
-
+from bfs import bfs
+from dfs import dfs
+from dls import dls
+from ucs import ucs
+from greedy import greedy
+from a_star import a_star
+from utilities import get_node_color
+from utilities import draw_graph_background
+from backtrack import backtrack_path
 start = 'Haritha'
 end = 'Rashmi'
 
-def bfs(graph, start_node, end_node):
-  visited = set()
-  q = queue.Queue()
-  q.put(start_node)
-  order = []
-  path = []
-  while not q.empty():
-    vertex = q.get()
-    if vertex not in visited:
-      visited.add(vertex)
-      order.append(vertex)
-      for node in graph[vertex]:
-        if node not in visited:
-          q.put(node)
-      if vertex == end_node:
-        break
-  return order
-
-
-
-def dfs(graph, start_node, end_node, visited=set()):
-  if visited is None:
-    visited = set()
-  order=[]
-  if start_node not in visited:
-    order.append(start_node)
-    visited.add(start_node)
-    for node in graph[start_node]:
-      if node not in visited:
-        order.extend(dfs(graph,node,end_node,visited))
-      if(end_node in order):
-        break
-  return order
-
-def dls(graph, start_node, end_node, limit=1,visited=set(),level=0):
-  order=[]
-  if(level > limit):
-    return []
-  if start_node not in visited:
-    order.append(start_node)
-    visited.add(start_node)
-    for node in graph[start_node]:
-      # print('start_node', start_node, 'node', node, 'level', level)
-      if node not in visited:
-        if(level+1==limit) and node not in order:
-          order.append(node)
-        else:
-          new_order = dls(graph,node,end_node,limit,visited, level+1)
-          for sub_node in new_order:
-            if sub_node not in order:
-              order.append(sub_node)
-      if(end_node in order):
-        break
-
-  return order
-
-def ucs(graph, start_node, end_node):
-  visited = set()
-  q = queue.PriorityQueue()
-  entry_counter =0
-  q.put((0,entry_counter,start_node))
-  
-  order = []
-  while not q.empty():
-    vertex = q.get()
-    if vertex not in visited:
-      visited.add(vertex[2])
-      order.append(vertex[2])
-      for node in graph[vertex[2]]:
-        if node not in visited and all(node != item[2] for item in q.queue):
-          entry_counter+=1
-          q.put((graph[vertex[2]][node]['weight']+vertex[0],entry_counter, node))
-    if vertex[2] == end_node:
-      break
-  return order
-
-def greedy(graph, start_node, end_node):
-  visited = set()
-  q = queue.Queue()
-  q.put(start_node)
-  
-  order = []
-  while not q.empty():
-    vertex = q.get()
-    if vertex not in visited:
-      visited.add(vertex)
-      order.append(vertex)
-      min = None
-      min_heuristic = 100
-      for node in graph[vertex]:
-        h = nx.get_node_attributes(graph, 'h')[node]
-        if h < min_heuristic:
-          min = node
-          min_heuristic = h
-      if min is not None and min not in visited:      
-        q.put(min)    
-    if vertex == end_node:
-      break
-  return order
-
-def a_star(graph, start_node, end_node):
-  visited = set()
-  q = queue.PriorityQueue()
-  entry_counter =0
-  q.put((0,entry_counter,start_node))
-  
-  order = []
-  while not q.empty():
-    vertex = q.get()
-    # print('processing', vertex)
-    if vertex not in visited:
-      visited.add(vertex[2])
-      order.append(vertex[2])
-      for node in graph[vertex[2]]:
-        curr_cost = graph[vertex[2]][node]['weight'] + vertex[0] - nx.get_node_attributes(graph, 'h')[vertex[2]]
-        if(vertex[1]==0):
-          curr_cost = graph[vertex[2]][node]['weight']
-        h = nx.get_node_attributes(graph, 'h')[node]
-        if node not in visited:
-          if all(node != item[2] for item in q.queue):
-            entry_counter+=1
-            # print('vertex', vertex, 'node', node, 'curr_cost', curr_cost)
-            q.put((curr_cost+h, entry_counter, node))
-          else:
-            for item in q.queue:
-              if item[2] == node:
-                if curr_cost + h < item[0]:
-                  # print('vertex', vertex, 'node', node, 'curr_cost', curr_cost)
-                  entry_counter+=1
-                  q.queue.remove(item)
-                  q.put((curr_cost+h, entry_counter, node))
-          # print('queue', q.queue)
-    if vertex[2] == end_node:
-      break
-  return order
-
-def get_node_color(node, order, end_node, graph, final=False, path=[]):
-  color_map = []
-  if(len(order) == 0):
-    return 'b'
-  for i in graph.nodes:
-    color = '#6ec2f7'
-
-    if i in order and final:
-      color='#a686fc'
-    if i in path:
-      color='#fffaa0'
-    if i == end_node:
-      color='#7adc7a'
-    if i == order[0]:
-      color='#ff7276'
-    if i == node:
-      color='#fffaa0'
-    color_map.append(color)
-  return color_map
 
 def visualize_search(order,title, G, position, end_node):
   plt.figure() 
-  text_x = 2.5
-  text_y = -4
+  text_pos = (2.5, -4)
   path = backtrack_path(order[0],end_node, order, G)
   text_content = 'Traversal: ' + (', ').join(order) + '\nPath: ' + (', ').join(path[i] for i in range(len(path)-1, -1, -1))
   print('Traversal', order)
   print('Path', path)
-  plt.title(title)
-  plt.text(text_x, text_y, text_content, color='#333333')
+  edge_labels = nx.get_edge_attributes(G,'weight')
+  plt.clf()
   legend_colors = {'Not Visited': '#6ec2f7', 'Currently Visiting / Path': '#fffaa0', 'Visited': '#a686fc', 'Start Node': '#ff7276', 'Goal Node': '#7adc7a'}
   legend_elements = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, label=label, markersize=15) for label, color in legend_colors.items()]
-  plt.clf()
+  draw_graph_background(title, text_pos, text_content, position, edge_labels, legend_elements,G)
   # plt.pause(3)
   for i, node in enumerate(order, start=1):
     plt.clf()
-    plt.title(title)
-    plt.text(text_x, text_y, text_content, color='#333333')
+    draw_graph_background(title, text_pos, text_content, position, edge_labels, legend_elements,G)
     nx.draw(G, position, with_labels=True,node_color=get_node_color(node, order, end_node, G), node_size=5000)
-    edge_labels = nx.get_edge_attributes(G,'weight')
-    nx.draw_networkx_labels(G, {node: (x, y-0.2) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}, labels=nx.get_node_attributes(G, 'h'))
-    nx.draw_networkx_edge_labels(G,position,edge_labels=edge_labels)
-    plt.legend(handles=legend_elements, loc='lower right')
-
     plt.draw()
     plt.pause(1)
 
   node=None
   plt.clf()
-  plt.title(title)
-  plt.text(text_x, text_y, text_content, color='#333333')
+  draw_graph_background(title, text_pos, text_content, position, edge_labels, legend_elements,G)
   nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G,True, path),node_size=5000)
-  edge_labels = nx.get_edge_attributes(G,'weight')
-  nx.draw_networkx_labels(G, {node: (x, y-0.2) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}, labels=nx.get_node_attributes(G, 'h'))
-  nx.draw_networkx_edge_labels(G,position,edge_labels=edge_labels)
-  plt.legend(handles=legend_elements, loc='lower right')
   plt.draw()
-  plt.show()
+  # plt.show()
 
-def backtrack_path(start_node, end_node, order, graph):
-  if(end_node not in order):
-    return []
-  path = []
-  path.append(end_node)
-  for i in range(len(order)-1,0,-1):
-    if(order[i] in graph.neighbors(path[-1])):
-      path.append(order[i])
-  path.append(start_node)
-  return path
+
 
 def visualize_idls_search(start_node, end_node,title, G, position):
   plt.figure() 
   text_x = 2
   text_y = 2
   text_content = 'Depth Limit: '
-  plt.title(title)
   legend_colors = {'Not Visited': '#6ec2f7', 'Currently Visiting / Path': '#fffaa0', 'Visited': '#a686fc', 'Start Node': '#ff7276', 'Goal Node': '#7adc7a'}
   legend_elements = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, label=label, markersize=15) for label, color in legend_colors.items()]
   plt.clf()
+  plt.title(title)
   plt.pause(3)
   plt.text(text_x, text_y, text_content, fontsize=12, color='red')
   order = []
@@ -252,21 +84,8 @@ def visualize_idls_search(start_node, end_node,title, G, position):
   nx.draw_networkx_edge_labels(G,position,edge_labels=edge_labels)
   plt.legend(handles=legend_elements, loc='lower right')
   plt.draw()
-  plt.show()
+  # plt.show()
 
-
-
-
-pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}
-
-
-# visualize_search(bfs(G, start, end), "BFS Visualization", G, pos, end)
-# visualize_search(dfs(G, start, end), "DFS Visualization", G, pos, end)
-# visualize_search(dls(G, start, end,3), "DLS Visualization", G, pos, end)
-# visualize_idls_search(start, end, "IDLS Visualization", G, pos)
-# visualize_search(ucs(G, start, end), "UCS Visualization", G, pos, end)
-# visualize_search(greedy(G, start, end), "Greedy Visualization", G, pos, end)
-# visualize_search(a_star(G, start, end), "A Star Visualization", G, pos, end)
 
 def on_bfs_button_click(event):
   visualize_search(bfs(G, start, end), "Breadth First Search Visualization", G, pos, end)
@@ -308,7 +127,7 @@ def on_dls_button_click(event):
   d4_button.on_clicked(on_depth4_button_click)
   d5_button.on_clicked(on_depth5_button_click)
   d6_button.on_clicked(on_depth6_button_click)
-  # plt.draw()
+  plt.draw()
 
 def on_idls_button_click(event):
   visualize_idls_search(start, end, "Iterative Deepening Search Visualization", G, pos)
@@ -324,6 +143,7 @@ def on_a_star_button_click(event):
 
 
 def main():
+  plt.figure()
   plt.clf()
   bfs_button_ax = plt.axes([0.25, 0.75, 0.5, 0.075])
   dfs_button_ax = plt.axes([0.25, 0.655, 0.5, 0.075])
@@ -347,29 +167,8 @@ def main():
   greedy_button.on_clicked(on_greedy_button_click)
   a_star_button.on_clicked(on_a_star_button_click)
   plt.show()
-  # print("Select Algorithm")
-  # print("1. Breadth First Search")
-  # print("2. Depth First Search")
-  # print("3. Depth Limited Search")
-  # print("4. Iterative Deepening Search")
-  # print("5. Uniform Cost Search")
-  # print("6. Greedy Search")
-  # print("7. A* Search")
-  
-  # choice = int(input("Enter your choice: "))
-  # if choice==1:
-  #   visualize_search(bfs(G, start, end), "Breadth First Search Visualization", G, pos, end)
-  # elif choice==2:
-  #   visualize_search(dfs(G, start, end), "Depth First Search Visualization", G, pos, end)
-  # elif choice==3:
-  #   visualize_search(dls(G, start, end,int(input("Enter Depth: "))), "Depth Limited Search Visualization", G, pos, end)
-  # elif choice==4:
-  #   visualize_idls_search(start, end, "Iterative Deepening Search Visualization", G, pos)
-  # elif choice==5:
-  #   visualize_search(ucs(G, start, end), "Uniform Cost Search Visualization", G, pos, end)
-  # elif choice==6:
-  #   visualize_search(greedy(G, start, end), "Greedy Search Visualization", G, pos, end)
-  # elif choice==7:
-  #   visualize_search(a_star(G, start, end), "A Star Search Visualization", G, pos, end)
+
+
+pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}
 
 main()
