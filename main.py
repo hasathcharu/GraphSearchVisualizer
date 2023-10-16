@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from graph import G
 from matplotlib.widgets import Button
 
+start = 'Haritha'
+end = 'Rashmi'
 
 def bfs(graph, start_node, end_node):
   visited = set()
@@ -258,37 +260,37 @@ def visualize_idls_search(start_node, end_node,title, G, position):
 pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}
 
 
-# visualize_search(bfs(G, 'Haritha', 'Rashmi'), "BFS Visualization", G, pos, 'Rashmi')
-# visualize_search(dfs(G, 'Haritha', 'Rashmi'), "DFS Visualization", G, pos, 'Rashmi')
-# visualize_search(dls(G, 'Haritha', 'Rashmi',3), "DLS Visualization", G, pos, 'Rashmi')
-# visualize_idls_search('Haritha', 'Rashmi', "IDLS Visualization", G, pos)
-# visualize_search(ucs(G, 'Haritha', 'Rashmi'), "UCS Visualization", G, pos, 'Rashmi')
-# visualize_search(greedy(G, 'Haritha', 'Rashmi'), "Greedy Visualization", G, pos, 'Rashmi')
-# visualize_search(a_star(G, 'Haritha', 'Rashmi'), "A Star Visualization", G, pos, 'Rashmi')
+# visualize_search(bfs(G, start, end), "BFS Visualization", G, pos, end)
+# visualize_search(dfs(G, start, end), "DFS Visualization", G, pos, end)
+# visualize_search(dls(G, start, end,3), "DLS Visualization", G, pos, end)
+# visualize_idls_search(start, end, "IDLS Visualization", G, pos)
+# visualize_search(ucs(G, start, end), "UCS Visualization", G, pos, end)
+# visualize_search(greedy(G, start, end), "Greedy Visualization", G, pos, end)
+# visualize_search(a_star(G, start, end), "A Star Visualization", G, pos, end)
 
 def on_bfs_button_click(event):
-  visualize_search(bfs(G, 'Haritha', 'Rashmi'), "Breadth First Search Visualization", G, pos, 'Rashmi')
+  visualize_search(bfs(G, start, end), "Breadth First Search Visualization", G, pos, end)
 
 def on_dfs_button_click(event):
-  visualize_search(dfs(G, 'Haritha', 'Rashmi'), "Depth First Search Visualization", G, pos, 'Rashmi')
+  visualize_search(dfs(G, start, end), "Depth First Search Visualization", G, pos, end)
 
 def on_depth1_button_click(event):
-  visualize_search(dls(G, 'Haritha', 'Rashmi',1), "Depth Limited Search Visualization - Depth 1", G, pos, 'Rashmi')
+  visualize_search(dls(G, start, end,1), "Depth Limited Search Visualization - Depth 1", G, pos, end)
 
 def on_depth2_button_click(event):
-  visualize_search(dls(G, 'Haritha', 'Rashmi',2), "Depth Limited Search Visualization - Depth 2", G, pos, 'Rashmi')
+  visualize_search(dls(G, start, end,2), "Depth Limited Search Visualization - Depth 2", G, pos, end)
 
 def on_depth3_button_click(event):
-  visualize_search(dls(G, 'Haritha', 'Rashmi',3), "Depth Limited Search Visualization - Depth 3", G, pos, 'Rashmi')
+  visualize_search(dls(G, start, end,3), "Depth Limited Search Visualization - Depth 3", G, pos, end)
 
 def on_depth4_button_click(event):
-  visualize_search(dls(G, 'Haritha', 'Rashmi',4), "Depth Limited Search Visualization - Depth 4", G, pos, 'Rashmi')
+  visualize_search(dls(G, start, end,4), "Depth Limited Search Visualization - Depth 4", G, pos, end)
 
 def on_depth5_button_click(event):
-  visualize_search(dls(G, 'Haritha', 'Rashmi',5), "Depth Limited Search Visualization - Depth 5", G, pos, 'Rashmi')
+  visualize_search(dls(G, start, end,5), "Depth Limited Search Visualization - Depth 5", G, pos, end)
 
 def on_depth6_button_click(event):
-  visualize_search(dls(G, 'Haritha', 'Rashmi',6), "Depth Limited Search Visualization - Depth 6", G, pos, 'Rashmi')
+  visualize_search(dls(G, start, end,6), "Depth Limited Search Visualization - Depth 6", G, pos, end)
 
 def on_dls_button_click(event):
   plt.figure()
@@ -309,16 +311,16 @@ def on_dls_button_click(event):
   # plt.draw()
 
 def on_idls_button_click(event):
-  visualize_idls_search('Haritha', 'Rashmi', "Iterative Deepening Search Visualization", G, pos)
+  visualize_idls_search(start, end, "Iterative Deepening Search Visualization", G, pos)
 
 def on_ucs_button_click(event):
-  visualize_search(ucs(G, 'Haritha', 'Rashmi'), "Uniform Cost Search Visualization", G, pos, 'Rashmi')
+  visualize_search(ucs(G, start, end), "Uniform Cost Search Visualization", G, pos, end)
 
 def on_greedy_button_click(event):
-  visualize_search(greedy(G, 'Haritha', 'Rashmi'), "Greedy Search Visualization", G, pos, 'Rashmi')
+  visualize_search(greedy(G, start, end), "Greedy Search Visualization", G, pos, end)
 
 def on_a_star_button_click(event):
-  visualize_search(a_star(G, 'Haritha', 'Rashmi'), "A Star Search Visualization", G, pos, 'Rashmi')
+  visualize_search(a_star(G, start, end), "A Star Search Visualization", G, pos, end)
 
 
 def main():
@@ -356,18 +358,18 @@ def main():
   
   # choice = int(input("Enter your choice: "))
   # if choice==1:
-  #   visualize_search(bfs(G, 'Haritha', 'Rashmi'), "Breadth First Search Visualization", G, pos, 'Rashmi')
+  #   visualize_search(bfs(G, start, end), "Breadth First Search Visualization", G, pos, end)
   # elif choice==2:
-  #   visualize_search(dfs(G, 'Haritha', 'Rashmi'), "Depth First Search Visualization", G, pos, 'Rashmi')
+  #   visualize_search(dfs(G, start, end), "Depth First Search Visualization", G, pos, end)
   # elif choice==3:
-  #   visualize_search(dls(G, 'Haritha', 'Rashmi',int(input("Enter Depth: "))), "Depth Limited Search Visualization", G, pos, 'Rashmi')
+  #   visualize_search(dls(G, start, end,int(input("Enter Depth: "))), "Depth Limited Search Visualization", G, pos, end)
   # elif choice==4:
-  #   visualize_idls_search('Haritha', 'Rashmi', "Iterative Deepening Search Visualization", G, pos)
+  #   visualize_idls_search(start, end, "Iterative Deepening Search Visualization", G, pos)
   # elif choice==5:
-  #   visualize_search(ucs(G, 'Haritha', 'Rashmi'), "Uniform Cost Search Visualization", G, pos, 'Rashmi')
+  #   visualize_search(ucs(G, start, end), "Uniform Cost Search Visualization", G, pos, end)
   # elif choice==6:
-  #   visualize_search(greedy(G, 'Haritha', 'Rashmi'), "Greedy Search Visualization", G, pos, 'Rashmi')
+  #   visualize_search(greedy(G, start, end), "Greedy Search Visualization", G, pos, end)
   # elif choice==7:
-  #   visualize_search(a_star(G, 'Haritha', 'Rashmi'), "A Star Search Visualization", G, pos, 'Rashmi')
+  #   visualize_search(a_star(G, start, end), "A Star Search Visualization", G, pos, end)
 
 main()
