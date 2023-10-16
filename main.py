@@ -39,14 +39,21 @@ def dfs(graph, start_node, end_node, visited=set()):
 
 def dls(graph, start_node, end_node, limit=1,visited=set(),level=0):
   order=[]
-  if(level == limit):
+  if(level > limit):
     return []
   if start_node not in visited:
     order.append(start_node)
     visited.add(start_node)
     for node in graph[start_node]:
+      # print('start_node', start_node, 'node', node, 'level', level)
       if node not in visited:
-        order.extend(dls(graph,node,end_node,limit,visited, level+1))
+        if(level+1==limit) and node not in order:
+          order.append(node)
+        else:
+          new_order = dls(graph,node,end_node,limit,visited, level+1)
+          for sub_node in new_order:
+            if sub_node not in order:
+              order.append(sub_node)
       if(end_node in order):
         break
 
@@ -106,20 +113,27 @@ def a_star(graph, start_node, end_node):
   while not q.empty():
     vertex = q.get()
     print('processing', vertex)
-    print(q.queue)
     if vertex not in visited:
       visited.add(vertex[2])
       order.append(vertex[2])
       for node in graph[vertex[2]]:
-        if node not in visited and all(node != item[2] for item in q.queue):
-          entry_counter+=1
-          curr_cost = graph[vertex[2]][node]['weight'] + vertex[0] - nx.get_node_attributes(graph, 'h')[vertex[2]]
-          if(vertex[1]==0):
-            curr_cost = graph[vertex[2]][node]['weight']
-          print('vertex', vertex, 'node', node, 'curr_cost', curr_cost)
-
-          h = nx.get_node_attributes(graph, 'h')[node]
-          q.put((curr_cost+h, entry_counter, node))
+        curr_cost = graph[vertex[2]][node]['weight'] + vertex[0] - nx.get_node_attributes(graph, 'h')[vertex[2]]
+        if(vertex[1]==0):
+          curr_cost = graph[vertex[2]][node]['weight']
+        h = nx.get_node_attributes(graph, 'h')[node]
+        if node not in visited:
+          if all(node != item[2] for item in q.queue):
+            entry_counter+=1
+            print('vertex', vertex, 'node', node, 'curr_cost', curr_cost)
+            q.put((curr_cost+h, entry_counter, node))
+          else:
+            for item in q.queue:
+              if item[2] == node:
+                if curr_cost + h < item[0]:
+                  print('vertex', vertex, 'node', node, 'curr_cost', curr_cost)
+                  entry_counter+=1
+                  q.queue.remove(item)
+                  q.put((curr_cost+h, entry_counter, node))
           print('queue', q.queue)
     if vertex[2] == end_node:
       break
@@ -191,6 +205,7 @@ def visualize_idls_search(start_node, end_node,title, G, position):
   order = []
   for j in range(1,10):
     order = dls(G, start_node, end_node, limit=j,visited=set())
+    print(order)
     for i, node in enumerate(order, start=1):
       plt.clf()
       plt.title(title)
@@ -225,12 +240,13 @@ G.add_edges_from([
   ('Ransilu','Ranul',{'weight':5, }),
   ('Waruni','Menura',{'weight':1, }),
   ('Menura','Ranul',{'weight':3, }),
+  ('Menura', 'Nethmini',{'weight':2}),
   ('Isuri','Rashmi',{'weight':1, }),
   ('Isuri','Kithmi',{'weight':3, }),
   ('Isuri','Thathsarani',{'weight':5, }),
   ('Kithmi','Rashmi',{'weight':5, }),
   ('Ranul','Taneesha',{'weight':1, }),
-  ('Taneesha','Rashmi',{'weight':2, }),
+  ('Rashmi','Taneesha',{'weight':2, }),
   # ('Taneesha','Rashmi',{'weight':1, }),
 ])
 G.nodes['Haritha']['pos'] = (3.5, 2)
@@ -238,6 +254,7 @@ G.nodes['Manupa']['pos'] = (2.5, 1)
 G.nodes['Ransilu']['pos'] = (3.2, 1)
 G.nodes['Waruni']['pos'] = (4, 1)
 G.nodes['Menura']['pos'] = (4.5, 2)
+G.nodes['Nethmini']['pos'] = (5, 1)
 G.nodes['Isuri']['pos'] = (2.5, -1)
 G.nodes['Kithmi']['pos'] = (3.5, -1)
 G.nodes['Ranul']['pos'] = (4.5, 0)
@@ -253,6 +270,7 @@ G.nodes['Menura']['h'] = 9
 G.nodes['Isuri']['h'] = 1
 G.nodes['Kithmi']['h'] = 2
 G.nodes['Ranul']['h'] = 4
+G.nodes['Nethmini']['h'] = 8
 # G.nodes['Taneesha']['h'] = 1
 G.nodes['Taneesha']['h'] = 3
 G.nodes['Rashmi']['h'] = 0
@@ -270,27 +288,30 @@ pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()
 # visualize_search(a_star(G, 'Haritha', 'Rashmi'), "A Star Visualization", G, pos, 'Rashmi')
 
 
-print("Select Algorithm")
-print("1. Breadth First Search")
-print("2. Depth First Search")
-print("3. Depth Limited Search")
-print("4. Iterative Deepening Search")
-print("5. Uniform Cost Search")
-print("6. Greedy Search")
-print("7. A* Search")
+def main():
+  print("Select Algorithm")
+  print("1. Breadth First Search")
+  print("2. Depth First Search")
+  print("3. Depth Limited Search")
+  print("4. Iterative Deepening Search")
+  print("5. Uniform Cost Search")
+  print("6. Greedy Search")
+  print("7. A* Search")
+  
+  choice = int(input("Enter your choice: "))
+  if choice==1:
+    visualize_search(bfs(G, 'Haritha', 'Rashmi'), "Breadth First Search Visualization", G, pos, 'Rashmi')
+  elif choice==2:
+    visualize_search(dfs(G, 'Haritha', 'Rashmi'), "Depth First Search Visualization", G, pos, 'Rashmi')
+  elif choice==3:
+    visualize_search(dls(G, 'Haritha', 'Rashmi',3), "Depth Limited Search Visualization", G, pos, 'Rashmi')
+  elif choice==4:
+    visualize_idls_search('Haritha', 'Rashmi', "Iterative Deepening Search Visualization", G, pos)
+  elif choice==5:
+    visualize_search(ucs(G, 'Haritha', 'Rashmi'), "Uniform Cost Search Visualization", G, pos, 'Rashmi')
+  elif choice==6:
+    visualize_search(greedy(G, 'Haritha', 'Rashmi'), "Greedy Search Visualization", G, pos, 'Rashmi')
+  elif choice==7:
+    visualize_search(a_star(G, 'Haritha', 'Rashmi'), "A Star Search Visualization", G, pos, 'Rashmi')
 
-choice = int(input("Enter your choice: "))
-if choice==1:
-  visualize_search(bfs(G, 'Haritha', 'Rashmi'), "Breadth First Search Visualization", G, pos, 'Rashmi')
-elif choice==2:
-  visualize_search(dfs(G, 'Haritha', 'Rashmi'), "Depth First Search Visualization", G, pos, 'Rashmi')
-elif choice==3:
-  visualize_search(dls(G, 'Haritha', 'Rashmi',3), "Depth Limited Search Visualization", G, pos, 'Rashmi')
-elif choice==4:
-  visualize_idls_search('Haritha', 'Rashmi', "Iterative Deepening Search Visualization", G, pos)
-elif choice==5:
-  visualize_search(ucs(G, 'Haritha', 'Rashmi'), "Uniform Cost Search Visualization", G, pos, 'Rashmi')
-elif choice==6:
-  visualize_search(greedy(G, 'Haritha', 'Rashmi'), "Greedy Search Visualization", G, pos, 'Rashmi')
-elif choice==7:
-  visualize_search(a_star(G, 'Haritha', 'Rashmi'), "A Star Search Visualization", G, pos, 'Rashmi')
+main()
