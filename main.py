@@ -12,18 +12,17 @@ from a_star import a_star
 from utilities import get_node_color
 from utilities import draw_graph_background
 from utilities import get_text
+from utilities import draw_copyright_text
 from backtrack import backtrack_path
 
 start = 'Haritha'
 end = 'Rashmi'
-text_pos = (2.5, -4)
 legend_colors = {'Not Visited': '#6ec2f7', 'Currently Visiting / Path': '#fffaa0', 'Visited': '#a686fc', 'Start Node': '#ff7276', 'Goal Node': '#7adc7a'}
 btn_color = '#7adc7a'
 btn_hover_color = '#5da65d'
 legend_elements = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, label=label, markersize=15) for label, color in legend_colors.items()]
 edge_labels = nx.get_edge_attributes(G,'weight')
 pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}
-
 figures = []
 
 def visualize_search(order,title, G, position, end_node):
@@ -32,17 +31,17 @@ def visualize_search(order,title, G, position, end_node):
   print('Path', path)
   plt.figure() 
   plt.clf()
-  draw_graph_background(title, text_pos, get_text(order,path), position, edge_labels, legend_elements,G)
+  draw_graph_background(title, get_text(order,path), position, edge_labels, legend_elements,G)
   for i, node in enumerate(order, start=1):
     plt.clf()
-    draw_graph_background(title, text_pos, get_text(order,path), position, edge_labels, legend_elements,G)
+    draw_graph_background(title, get_text(order,path), position, edge_labels, legend_elements,G)
     nx.draw(G, position, with_labels=True,node_color=get_node_color(node, order, end_node, G), node_size=5000)
     plt.draw()
     plt.pause(1)
 
   node=None
   plt.clf()
-  draw_graph_background(title, text_pos, get_text(order,path), position, edge_labels, legend_elements,G)
+  draw_graph_background(title, get_text(order,path), position, edge_labels, legend_elements,G)
   nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G,True, path),node_size=5000)
   plt.draw()
   plt.show()
@@ -59,7 +58,7 @@ def visualize_idls_search(start_node, end_node,title, G, position):
     path = backtrack_path(order[0],end_node, order, G)
     for i, node in enumerate(order, start=1):
       plt.clf()
-      draw_graph_background(title + '\n\nDepth '+str(j), text_pos, get_text(order,path), position, edge_labels, legend_elements,G)
+      draw_graph_background(title + '\n\nDepth '+str(j), get_text(order,path), position, edge_labels, legend_elements,G)
       nx.draw(G, position, with_labels=True,node_color=get_node_color(node, order, end_node, G), node_size=5000)
       plt.draw()
       plt.pause(1)
@@ -68,7 +67,7 @@ def visualize_idls_search(start_node, end_node,title, G, position):
       break
   node = None
   plt.clf()
-  draw_graph_background(title + '\n\nDepth '+str(j), text_pos, get_text(order,path), position, edge_labels, legend_elements,G)
+  draw_graph_background(title + '\n\nDepth '+str(j), get_text(order,path), position, edge_labels, legend_elements,G)
   nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G,True, backtrack_path(order[0],end_node, order, G)),node_size=5000)
   plt.draw()
   plt.show()
@@ -115,6 +114,7 @@ def on_dls_button_click(event):
   d4_button.on_clicked(on_depth4_button_click)
   d5_button.on_clicked(on_depth5_button_click)
   d6_button.on_clicked(on_depth6_button_click)
+  draw_copyright_text()
   plt.show()
 
 def on_idls_button_click(event):
@@ -154,6 +154,7 @@ def main():
   ucs_button.on_clicked(on_ucs_button_click)
   greedy_button.on_clicked(on_greedy_button_click)
   a_star_button.on_clicked(on_a_star_button_click)
+  draw_copyright_text()
   plt.show()
 
 

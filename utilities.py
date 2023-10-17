@@ -20,12 +20,22 @@ def get_node_color(node, order, end_node, graph, final=False, path=[]):
     color_map.append(color)
   return color_map
 
-def draw_graph_background(title, text_pos, text_content, position, edge_labels, legend_elements,G):
+def draw_copyright_text(G=None):
+  x = 0.5
+  y = -1
+  if (G):
+    positions = [(x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()]
+    x = sum([x for (x,y) in positions])/len(positions)
+    y = min([y for (x,y) in positions])-1.3
+  plt.text(x, y, "Made with ❤️ by Haritha Hasathcharu", color='#333333', ha='center')
+
+def draw_graph_background(title, text_content, position, edge_labels, legend_elements,G):
   plt.title(title)
-  plt.text(text_pos[0], text_pos[1], text_content, color='#333333')
+  plt.text(2.5, -4, text_content, color='#333333')
   nx.draw_networkx_labels(G, {node: (x, y-0.2) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}, labels=nx.get_node_attributes(G, 'h'))
   nx.draw_networkx_edge_labels(G,position,edge_labels=edge_labels)
   plt.legend(handles=legend_elements, loc='lower right')
+  draw_copyright_text(G)
 
 
 def get_text(order,path):
