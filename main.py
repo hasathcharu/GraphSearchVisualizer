@@ -10,17 +10,16 @@ from ucs import ucs
 from greedy import greedy
 from a_star import a_star
 from utilities import get_node_color
-from utilities import draw_graph_background
+from utilities import draw_graph
 from utilities import get_text
 from utilities import draw_copyright_text
 from backtrack import backtrack_path
-
 start = 'Haritha'
 end = 'Rashmi'
 legend_colors = {'Not Visited': '#6ec2f7', 'Currently Visiting / Path': '#fffaa0', 'Visited': '#a686fc', 'Start Node': '#ff7276', 'Goal Node': '#7adc7a'}
-btn_color = '#7adc7a'
+btn_color = '#9bfdcc'
 btn_hover_color = '#5da65d'
-legend_elements = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, label=label, markersize=15) for label, color in legend_colors.items()]
+legend_elements = [plt.Line2D([0], [0], marker='o', color='#111111', markerfacecolor=color, label=label, markersize=15) for label, color in legend_colors.items()]
 edge_labels = nx.get_edge_attributes(G,'weight')
 pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}
 figures = []
@@ -29,47 +28,35 @@ def visualize_search(order,title, G, position, end_node):
   path = backtrack_path(order[0],end_node, order, G)
   print('Traversal', order)
   print('Path', path)
-  plt.figure() 
-  plt.clf()
-  draw_graph_background(title, get_text(order,path), position, edge_labels, legend_elements,G)
+  figure, ax = plt.subplots() 
+  ax.set_facecolor('#111111')
+  draw_graph(title, get_text(order,path), position, edge_labels, legend_elements,G, None, order, end_node)
   for i, node in enumerate(order, start=1):
-    plt.clf()
-    draw_graph_background(title, get_text(order,path), position, edge_labels, legend_elements,G)
-    nx.draw(G, position, with_labels=True,node_color=get_node_color(node, order, end_node, G), node_size=5000)
-    plt.draw()
+    draw_graph(title, get_text(order,path), position, edge_labels, legend_elements,G, node, order, end_node)
     plt.pause(1)
 
   node=None
-  plt.clf()
-  draw_graph_background(title, get_text(order,path), position, edge_labels, legend_elements,G)
-  nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G,True, path),node_size=5000)
-  plt.draw()
+  figure.clear()
+  draw_graph(title, get_text(order,path), position, edge_labels, legend_elements,G, None, order, end_node, True, path)
   plt.show()
 
 
 
 def visualize_idls_search(start_node, end_node,title, G, position):
-  plt.figure() 
+  figure, ax = plt.subplots() 
   path = None
-  plt.clf()
+  figure.clear()
   order = []
   for j in range(1,10):
     order = dls(G, start_node, end_node, limit=j,visited=set())
     path = backtrack_path(order[0],end_node, order, G)
     for i, node in enumerate(order, start=1):
-      plt.clf()
-      draw_graph_background(title + '\n\nDepth '+str(j), get_text(order,path), position, edge_labels, legend_elements,G)
-      nx.draw(G, position, with_labels=True,node_color=get_node_color(node, order, end_node, G), node_size=5000)
-      plt.draw()
+      draw_graph(title + '\n\nDepth '+str(j), get_text(order,path), position, edge_labels, legend_elements,G, node, order, end_node)
       plt.pause(1)
-    
     if(end_node in order):
       break
   node = None
-  plt.clf()
-  draw_graph_background(title + '\n\nDepth '+str(j), get_text(order,path), position, edge_labels, legend_elements,G)
-  nx.draw(G, position, with_labels=True, node_color=get_node_color(node, order, end_node, G,True, backtrack_path(order[0],end_node, order, G)),node_size=5000)
-  plt.draw()
+  draw_graph(title + '\n\nDepth '+str(j), get_text(order,path), position, edge_labels, legend_elements,G, None, order, end_node, True, path)
   plt.show()
 
 
@@ -99,9 +86,10 @@ def on_depth6_button_click(event):
 
 def on_dls_button_click(event):
   fig, ax = plt.subplots()
+  fig.set_facecolor('#111111')
   ax.clear()
   plt.clf()
-  ax.set_title("Select Depth Limit")
+  plt.suptitle('Select Depth Limit', color='#eeeeee')
   d1_button = Button(plt.axes([0.25, 0.75, 0.5, 0.075]), 'Depth 1', color=btn_color, hovercolor=btn_hover_color)
   d2_button = Button(plt.axes([0.25, 0.655, 0.5, 0.075]), 'Depth 2', color=btn_color, hovercolor=btn_hover_color)
   d3_button = Button(plt.axes([0.25, 0.56, 0.5, 0.075]), 'Depth 3', color=btn_color, hovercolor=btn_hover_color)
@@ -131,8 +119,10 @@ def on_a_star_button_click(event):
 
 
 def main():
-  plt.figure()
+  fig, ax = plt.subplots()
   plt.clf()
+  fig.set_facecolor('#111111')
+  plt.suptitle('Search Algorithms Visualization', color='#eeeeee')
   bfs_button_ax = plt.axes([0.25, 0.75, 0.5, 0.075])
   dfs_button_ax = plt.axes([0.25, 0.655, 0.5, 0.075])
   dls_button_ax = plt.axes([0.25, 0.56, 0.5, 0.075])
