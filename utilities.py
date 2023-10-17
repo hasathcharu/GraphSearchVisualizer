@@ -35,7 +35,7 @@ def draw_graph(title, text_content, position, edge_labels, legend_elements,G, no
   nx.draw(G, position, with_labels=True,node_color=get_node_color(node, order, end_node, G, final, path), node_size=5000, edge_color='#eeeeee')
   nx.draw_networkx_labels(G, {node: (x, y-0.2) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}, labels=nx.get_node_attributes(G, 'h'), font_color='#333333')
   nx.draw_networkx_edge_labels(G,position,edge_labels=edge_labels, font_color='#333333')
-  legend = plt.legend(handles=legend_elements, loc='lower right', handletextpad=0.5)
+  legend = plt.legend(handles=legend_elements, loc='lower right', handletextpad=1, labelspacing=1.5)
   legend.get_frame().set_facecolor('#111111')  
   legend.get_frame().set_linewidth(0)
   legend.get_frame().set_edgecolor('none')

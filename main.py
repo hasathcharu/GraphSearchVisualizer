@@ -19,7 +19,7 @@ end = 'Rashmi'
 legend_colors = {'Not Visited': '#6ec2f7', 'Currently Visiting / Path': '#fffaa0', 'Visited': '#a686fc', 'Start Node': '#ff7276', 'Goal Node': '#7adc7a'}
 btn_color = '#9bfdcc'
 btn_hover_color = '#5da65d'
-legend_elements = [plt.Line2D([0], [0], marker='o', color='#111111', markerfacecolor=color, label=label, markersize=15) for label, color in legend_colors.items()]
+legend_elements = [plt.Line2D([0], [0], marker='o', color='#111111', markerfacecolor=color, label=label, markersize=20) for label, color in legend_colors.items()]
 edge_labels = nx.get_edge_attributes(G,'weight')
 pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}
 figures = []
@@ -122,7 +122,7 @@ def main():
   fig, ax = plt.subplots()
   plt.clf()
   fig.set_facecolor('#111111')
-  plt.suptitle('Search Algorithms Visualization', color='#eeeeee')
+  plt.suptitle('Graph Search Visualizer', color='#eeeeee')
   bfs_button_ax = plt.axes([0.25, 0.75, 0.5, 0.075])
   dfs_button_ax = plt.axes([0.25, 0.655, 0.5, 0.075])
   dls_button_ax = plt.axes([0.25, 0.56, 0.5, 0.075])

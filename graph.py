@@ -22,16 +22,16 @@ G.add_edges_from([
 ])
 G.nodes['Haritha']['pos'] = (3.5, 2)
 G.nodes['Manupa']['pos'] = (2.5, 1)
-G.nodes['Ransilu']['pos'] = (3.2, 1)
+G.nodes['Ransilu']['pos'] = (3.3, 0.5)
 G.nodes['Waruni']['pos'] = (4, 1)
 G.nodes['Menura']['pos'] = (4.5, 2)
 G.nodes['Nethmini']['pos'] = (5, 1)
-G.nodes['Isuri']['pos'] = (2.5, -1)
+G.nodes['Isuri']['pos'] = (2.6, -1.6)
 G.nodes['Kithmi']['pos'] = (3.5, -1)
-G.nodes['Ranul']['pos'] = (4.5, 0)
+G.nodes['Ranul']['pos'] = (4.5, -0.2)
 G.nodes['Taneesha']['pos'] = (4, -1.5)
 G.nodes['Rashmi']['pos'] = (3.5, -3)
-G.nodes['Thathsarani']['pos'] = (3, 0)
+G.nodes['Thathsarani']['pos'] = (2.9, -0.3)
 
 G.nodes['Haritha']['h'] = 10
 G.nodes['Manupa']['h'] = 6
