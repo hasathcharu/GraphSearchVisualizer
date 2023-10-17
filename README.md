@@ -22,6 +22,7 @@ pip3 install networkx
 ```
 
 - Define your graph in the `graph.py` file.
+- Set your start and goal nodes in the main.py file.
 - Then run the `main.py` file.
 - Make sure you are properly ordering the edges so that BFS and DFS algorithms can figure out which node to travel first and best visualize your scenario.
 
