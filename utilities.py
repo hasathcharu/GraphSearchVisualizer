@@ -26,3 +26,11 @@ def draw_graph_background(title, text_pos, text_content, position, edge_labels, 
   nx.draw_networkx_labels(G, {node: (x, y-0.2) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}, labels=nx.get_node_attributes(G, 'h'))
   nx.draw_networkx_edge_labels(G,position,edge_labels=edge_labels)
   plt.legend(handles=legend_elements, loc='lower right')
+
+
+def get_text(order,path):
+  path_text = (', ').join(path[i] for i in range(len(path)-1, -1, -1))
+  if(len(path_text) == 0):
+    path_text = 'No path found'
+                          
+  return 'Traversal: ' + (', ').join(order) + '\nPath: ' + path_text
