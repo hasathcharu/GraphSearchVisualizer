@@ -7,6 +7,7 @@ I developed this tool for visualizing various graph search algorithms for an Ass
 - Depth Limited Search
 - Iterative Deepening Search
 - Uniform Cost Search
+- Bidirectional Search
 - Greedy Search
 - A\* Search
 
