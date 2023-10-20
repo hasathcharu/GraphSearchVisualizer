@@ -14,7 +14,7 @@ def get_node_color(node, order, end_node, graph, final=False, path=[]):
       color='#9bfdcc'
     if i == order[0]:
       color='#ff7276'
-    if i == node:
+    if i in node:
       color='#fffaa0'
     color_map.append(color)
   return color_map
