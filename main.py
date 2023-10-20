@@ -18,7 +18,7 @@ start = 'Haritha'
 end = 'Rashmi'
 legend_colors = {'Not Visited': '#6ec2f7', 'Currently Visiting / Path': '#fffaa0', 'Visited': '#a686fc', 'Start Node': '#ff7276', 'Goal Node': '#7adc7a'}
 btn_color = '#9bfdcc'
-btn_hover_color = '#5da65d'
+btn_hover_color = '#63e0a2'
 legend_elements = [plt.Line2D([0], [0], marker='o', color='#111111', markerfacecolor=color, label=label, markersize=20) for label, color in legend_colors.items()]
 edge_labels = nx.get_edge_attributes(G,'weight')
 pos = {node: (x, y) for node, (x, y) in nx.get_node_attributes(G, 'pos').items()}
