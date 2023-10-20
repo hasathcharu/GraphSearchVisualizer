@@ -58,7 +58,7 @@ def visualize_idls_search(start_node, end_node,title, G, position):
     if(end_node in order):
       break
   node = None
-  draw_graph(title + '\n\nDepth '+str(j), get_text(order,path), position, edge_labels, legend_elements,G, None, all_order, end_node, True, path)
+  draw_graph(title + '\n\nDepth '+str(j), get_text(all_order,path), position, edge_labels, legend_elements,G, None, all_order, end_node, True, path)
   plt.show()
 
 
