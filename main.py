@@ -47,8 +47,10 @@ def visualize_idls_search(start_node, end_node,title, G, position):
   path = None
   figure.clear()
   order = []
+  all_order = []
   for j in range(1,10):
     order = dls(G, start_node, end_node, limit=j,visited=set())
+    all_order.extend(order)
     path = backtrack_path(order[0],end_node, order, G)
     for i, node in enumerate(order, start=1):
       draw_graph(title + '\n\nDepth '+str(j), get_text(order,path), position, edge_labels, legend_elements,G, node, order, end_node)
@@ -56,7 +58,7 @@ def visualize_idls_search(start_node, end_node,title, G, position):
     if(end_node in order):
       break
   node = None
-  draw_graph(title + '\n\nDepth '+str(j), get_text(order,path), position, edge_labels, legend_elements,G, None, order, end_node, True, path)
+  draw_graph(title + '\n\nDepth '+str(j), get_text(order,path), position, edge_labels, legend_elements,G, None, all_order, end_node, True, path)
   plt.show()
 
 
