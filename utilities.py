@@ -1,5 +1,19 @@
 import matplotlib.pyplot as plt
 import networkx as nx
+def interleave_arrays(arr1, arr2):
+    # Determine the length of the output array
+    length = min(len(arr1), len(arr2))
+    
+    # Interlock the arrays using list comprehension
+    interlocked = [val for pair in zip(arr1[:length], arr2[:length]) for val in pair]
+    
+    # If one array is longer than the other, append the remaining elements
+    if len(arr1) > len(arr2):
+        interlocked.extend(arr1[length:])
+    elif len(arr2) > len(arr1):
+        interlocked.extend(arr2[length:])
+    
+    return interlocked
 def get_node_color(node, order, end_node, graph, final=False, path=[]):
   color_map = []
   if(len(order) == 0):

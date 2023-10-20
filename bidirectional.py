@@ -8,7 +8,6 @@ def bidirectional(graph, start_node, end_node):
   eq.put(end_node)
   sorder = []
   eorder = []
-  path = []
   while not (sq.empty() and eq.empty()):
     svertex = ''
     evertex = ''
@@ -21,10 +20,6 @@ def bidirectional(graph, start_node, end_node):
       svertex = sq.get()
 
 
-    print(svertex, evertex)
-
-
-    found = False
     if svertex in eorder:
       ueorder = eorder [:eorder.index(svertex)+1]
       order = sorder.copy()
@@ -42,10 +37,7 @@ def bidirectional(graph, start_node, end_node):
       for node in graph[svertex]:
         if node not in visited:
           sq.put(node)
-        # else:
           
-    if(found): break
-    found = False
 
     if (evertex and evertex not in visited):
       visited.add(evertex)
@@ -53,10 +45,7 @@ def bidirectional(graph, start_node, end_node):
       for node in graph[evertex]:
         if node not in visited:
           eq.put(node)
-        # else:
           
-    if(found): break
-  print(sorder,eorder,order,visited)
   return sorder, eorder, order
 
 # print(bidirectional(G, 'Haritha', 'Rashmi'))

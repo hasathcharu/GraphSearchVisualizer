@@ -4,7 +4,6 @@ def greedy(graph, start_node, end_node):
   visited = set()
   q = queue.Queue()
   q.put(start_node)
-  
   order = []
   while not q.empty():
     vertex = q.get()

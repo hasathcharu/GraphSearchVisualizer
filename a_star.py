@@ -9,7 +9,6 @@ def a_star(graph, start_node, end_node):
   order = []
   while not q.empty():
     vertex = q.get()
-    # print('processing', vertex)
     if vertex not in visited:
       visited.add(vertex[2])
       order.append(vertex[2])
@@ -21,17 +20,14 @@ def a_star(graph, start_node, end_node):
         if node not in visited:
           if all(node != item[2] for item in q.queue):
             entry_counter+=1
-            # print('vertex', vertex, 'node', node, 'curr_cost', curr_cost)
             q.put((curr_cost+h, entry_counter, node))
           else:
             for item in q.queue:
               if item[2] == node:
                 if curr_cost + h < item[0]:
-                  # print('vertex', vertex, 'node', node, 'curr_cost', curr_cost)
                   entry_counter+=1
                   q.queue.remove(item)
                   q.put((curr_cost+h, entry_counter, node))
-          # print('queue', q.queue)
     if vertex[2] == end_node:
       break
   return order
