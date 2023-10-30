@@ -6,6 +6,7 @@ from matplotlib.widgets import Button
 from bfs import bfs
 from dfs import dfs
 from dls import dls
+from dls import dls_recurs
 from ucs import ucs
 from bidirectional import bidirectional
 from greedy import greedy
@@ -46,8 +47,8 @@ figures = []
 delay = 0.5
 
 
-def visualize_search(order, title, G, position, end_node):
-    path = backtrack_path(order[0], end_node, order, G)
+def visualize_search(result, title, G, position, end_node):
+    (order, path) = result
     print("Traversal", order)
     print("Path", path)
     figure, ax = plt.subplots()
@@ -93,10 +94,6 @@ def visualize_search(order, title, G, position, end_node):
         True,
         path,
     )
-    shortest_path = nx.shortest_path(
-        G, source="Haritha", target="Rashmi", weight="weight"
-    )
-    print(shortest_path)
     plt.show()
 
 
@@ -155,11 +152,12 @@ def visualize_ucs_search(data, title, G, position, end_node):
     plt.show()
 
 
-def visualize_bidirectional_search(sorder, eorder, order, end_node, title, G, position):
+def visualize_bidirectional_search(
+    sorder, eorder, order, path, end_node, title, G, position
+):
     raw_order = sorder.copy()
     raw_order.extend(eorder)
     traverse_order = interleave_arrays(sorder, eorder)
-    path = backtrack_path(order[0], end_node, order, G)
     print("Traversal", traverse_order)
     print("Path", path)
     figure, ax = plt.subplots()
@@ -224,7 +222,7 @@ def visualize_idls_search(start_node, end_node, title, G, position):
     order = []
     all_order = []
     for j in range(1, 10):
-        order = dls(G, start_node, end_node, limit=j, visited=set())
+        order = dls_recurs(G, start_node, end_node, limit=j, visited=set())
         all_order.extend(order)
         path = backtrack_path(order[0], end_node, order, G)
         draw_graph(
