@@ -400,7 +400,7 @@ def on_idls_button_click(event):
 
 
 def on_ucs_button_click(event):
-    visualize_ucs_search(
+    visualize_search(
         ucs(G, start, end), "Uniform Cost Search Visualization", G, pos, end
     )
 
