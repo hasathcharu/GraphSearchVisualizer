@@ -100,6 +100,61 @@ def visualize_search(order, title, G, position, end_node):
     plt.show()
 
 
+def visualize_ucs_search(data, title, G, position, end_node):
+    path = data[0]
+    order = data[1]
+    print("Traversal", order)
+    print("Path", path)
+    figure, ax = plt.subplots()
+    ax.set_facecolor("#111111")
+    draw_graph(
+        title,
+        get_text(order, path),
+        position,
+        edge_labels,
+        legend_elements,
+        G,
+        [],
+        order,
+        end_node,
+    )
+    plt.pause(delay)
+    for i, node in enumerate(order, start=1):
+        draw_graph(
+            title,
+            get_text(order, path),
+            position,
+            edge_labels,
+            legend_elements,
+            G,
+            [node],
+            order,
+            end_node,
+        )
+        plt.pause(delay)
+
+    node = None
+    figure.clear()
+    draw_graph(
+        title,
+        get_text(order, path),
+        position,
+        edge_labels,
+        legend_elements,
+        G,
+        [],
+        order,
+        end_node,
+        True,
+        path,
+    )
+    shortest_path = nx.shortest_path(
+        G, source="Haritha", target="Rashmi", weight="weight"
+    )
+    print(shortest_path)
+    plt.show()
+
+
 def visualize_bidirectional_search(sorder, eorder, order, end_node, title, G, position):
     raw_order = sorder.copy()
     raw_order.extend(eorder)
@@ -347,7 +402,7 @@ def on_idls_button_click(event):
 
 
 def on_ucs_button_click(event):
-    visualize_search(
+    visualize_ucs_search(
         ucs(G, start, end), "Uniform Cost Search Visualization", G, pos, end
     )
 
